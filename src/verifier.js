@@ -136,7 +136,7 @@ const verifier = (answers, provider) =>{
     		console.log()
     		console.log('==========================================')
     		console.log('Finishing retrieving bytecode from blockchain...');
-    		console.log("Corresponding swarm hash is: bzzr:/" + swarm_hash);
+    		console.log("Corresponding swarm hash is: bzzr://" + swarm_hash);
 
     		if (bytecode_from_blockchain == bytecode_from_compiler){
     			console.log()
