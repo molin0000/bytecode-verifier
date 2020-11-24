@@ -15,15 +15,10 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^3.0.1",
-    "express": "^4.17.1",
     "figlet": "^1.2.4",
     "inquirer": "^7.0.0",
-    "jquery": "^3.4.1",
-    "jsdom": "^15.1.1",
-    "mongoose": "^5.7.0",
     "solc": "^0.5.11",
-    "web3": "^1.2.1",
-    "web3-core-requestmanager": "^1.2.1"
+    "web3": "^1.2.1"
   },
   "devDependencies": {
     "gulp": "^4.0.2"
