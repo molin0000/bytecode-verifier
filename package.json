@@ -1,28 +1,27 @@
 {
-  "name": "eth-bytecode-verifier",
-  "version": "0.3.1",
-  "description": "The purpose of this tool is to verify that the Contract Source on etherscan matches the bytecode that's actually on the blockchain. If the code shown on etherscan does not match the blockchain, the tool will display a warning message.",
+  "name": "@wandevs/bytecode-verifier",
+  "version": "0.4.1",
+  "description": "The purpose of this tool is to verify that the Contract Source on wanchain matches the bytecode that's actually on the blockchain. If the code does not match the blockchain, the tool will display a warning message.",
   "main": "test.js",
   "preferGlobal": true,
   "bin": {
-    "ethv": "./index.js"
+    "wanv": "./index.js"
   },
   "scripts": {
     "test": "mocha"
   },
-  "author": "Alex Luoyuan Xiong",
+  "author": "Mo Lin",
   "license": "MIT",
   "dependencies": {
     "chalk": "^2.4.2",
     "commander": "^3.0.1",
     "figlet": "^1.2.4",
     "inquirer": "^7.0.0",
-    "solc": "^0.5.11",
+    "solc": "^0.7.5",
     "web3": "^1.2.1"
   },
   "devDependencies": {
     "gulp": "^4.0.2"
   },
-  "repository": "https://github.com/ConsenSys/bytecode-verifier",
-  "private": null
+  "repository": "https://github.com/molin0000/bytecode-verifier"
 }
