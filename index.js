@@ -4,18 +4,18 @@ const program = require('commander');
 const chalk = require('chalk');
 const figlet = require('figlet');
 
-const {prompt} = require('inquirer');
+const { prompt } = require('inquirer');
 
-const {solcVersionList } = require('./src/solcVersion');
-const {verifier} = require('./src/verifier');
-const {compiler_look_up} = require('./src/compilerList');
+const { solcVersionList } = require('./src/solcVersion');
+const { verifier } = require('./src/verifier');
+const { compiler_look_up } = require('./src/compilerList');
 
 
 // craft question for verifier parameters.
 const verifier_question = [
   {
     type: 'input',
-    name:'solc_version',
+    name: 'solc_version',
     message: 'Enter compiler version. (e.g. v0.4.10+commit.f0d539ae).'
   },
   {
@@ -30,7 +30,7 @@ const verifier_question = [
   },
   {
     type: 'input',
-    name:'is_optimized',
+    name: 'is_optimized',
     message: '0 for not optimized, 1 for optimized.'
   }
 ];
@@ -42,11 +42,11 @@ const compiler_question = [
   }
 ]
 program
-  .version('0.2.1')
-  .description('=========  Ethereum Bytecode Verifier  ==========='+'\n'+
-  chalk.yellow(
-		figlet.textSync('eth-Verifier',{horizontalLayout:'default'})
-  )+'\n'+'   ===============================================')
+  .version('0.4.2')
+  .description('=========  Wanchain Bytecode Verifier  ===========' + '\n' +
+    chalk.yellow(
+      figlet.textSync('wan-Verifier', { horizontalLayout: 'default' })
+    ) + '\n' + '   ===============================================')
   .option('-l, --list', 'list of formal released Solidity Compiler')
 
 
@@ -54,37 +54,33 @@ program
   .command('verify <chainChoice>')
   .description('Verify a contract against bytecode on Blockchain')
   .action((chainChoice) => {
-    if (typeof chainChoice == 'undefined'){
+    if (typeof chainChoice == 'undefined') {
       console.log('Please specify a chain (e.g. mainnet)');
-    }
-    else{
-      console.log('You\'ve chosen: '+chainChoice);
-      
+    } else {
+      console.log('You\'ve chosen: ' + chainChoice);
+
       const net_to_provider = {
-        'mainnet':'https://mainnet.infura.io',
-        'ropsten': 'https://ropsten.infura.io',
-        'kovan': 'https://kovan.infura.io',
-        'rinkeby': 'https://rinkeby.infura.io',
+        'mainnet': 'https://gwan-ssl.wandevs.org:56891',
+        'testnet': 'https://gwan-ssl.wandevs.org:46891',
       }
-      
-      if (chainChoice == 'mainnet' || chainChoice == 'ropsten'
-        || chainChoice=='kovan' || chainChoice== 'rinkeby'){
-        
+
+      if (chainChoice == 'mainnet' || chainChoice == 'testnet') {
+
         var provider = net_to_provider[chainChoice];
         // After confirming the chain choice, prompt question. 
         prompt(verifier_question)
-          .then( (answers) =>{
-          answers['file_folder'] = process.cwd();
-          verifier(answers, provider);
-        })
+          .then((answers) => {
+            answers['file_folder'] = process.cwd();
+            verifier(answers, provider);
+          })
           .catch(err => {
             console.log(err);
           });
       }
-      else{
-        console.log(chalk.red.bold('Invalid chain choice')+' Your current choice is by default: mainchain');
-        console.log(chalk.green.bold('Please choose from: ')+chalk.underline('mainnet')+' , '+chalk.underline('ropsten')+' , '+
-        chalk.underline('kovan')+' , '+chalk.underline('rinkeby'));
+      else {
+        console.log(chalk.red.bold('Invalid chain choice') + ' Your current choice is by default: mainchain');
+        console.log(chalk.green.bold('Please choose from: ') + chalk.underline('mainnet') + ' , ' + chalk.underline('ropsten') + ' , ' +
+          chalk.underline('kovan') + ' , ' + chalk.underline('rinkeby'));
       }
     }
   });
@@ -92,20 +88,19 @@ program
 program
   .command('compiler')
   .description('Complete compiler version look up (major release plus all nightly commits)')
-  .action(()=>{
+  .action(() => {
     prompt(compiler_question)
-      .then((answers, provider)=>{
+      .then((answers, provider) => {
         compiler_look_up(answers);
       })
-      .catch(err=>{
+      .catch(err => {
         console.log(err);
       });
   });
 
 
 
-  program.parse(process.argv);
+program.parse(process.argv);
 
-  if (program.list) solcVersionList();
-  
-  
+if (program.list) solcVersionList();
+

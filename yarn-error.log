@@ -1,0 +1,57 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn publish
+
+PATH: 
+  /Users/molin/bin:/usr/local/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Users/molin/.cargo/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/usr/local/share/dotnet:/opt/X11/bin:~/.dotnet/tools:/Library/Apple/usr/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/molin/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Users/molin/.cargo/bin:/Users/molin/gopath/bin:/Users/molin/gopath/bin:/Users/molin/.cargo/bin
+
+Yarn version: 
+  1.17.3
+
+Node version: 
+  10.22.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/molin/workspace/utils/bytecode-verifier/package.json: Unexpected token } in JSON at position 750
+      at JSON.parse (<anonymous>)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:304:30)
+      at /usr/local/lib/node_modules/yarn/lib/cli.js:315:13
+
+npm manifest: 
+  {
+    "name": "@wandevs/bytecode-verifier",
+    "version": "0.4.0",
+    "description": "The purpose of this tool is to verify that the Contract Source on wanchain matches the bytecode that's actually on the blockchain. If the code does not match the blockchain, the tool will display a warning message.",
+    "main": "test.js",
+    "preferGlobal": true,
+    "bin": {
+      "wanv": "./index.js"
+    },
+    "scripts": {
+      "test": "mocha"
+    },
+    "author": "Mo Lin",
+    "license": "MIT",
+    "dependencies": {
+      "chalk": "^2.4.2",
+      "commander": "^3.0.1",
+      "figlet": "^1.2.4",
+      "inquirer": "^7.0.0",
+      "solc": "^0.7.5",
+      "web3": "^1.2.1"
+    },
+    "devDependencies": {
+      "gulp": "^4.0.2"
+    },
+    "repository": "https://github.com/molin0000/bytecode-verifier",
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
