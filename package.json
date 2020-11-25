@@ -1,6 +1,6 @@
 {
   "name": "@wandevs/bytecode-verifier",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "The purpose of this tool is to verify that the Contract Source on wanchain matches the bytecode that's actually on the blockchain. If the code does not match the blockchain, the tool will display a warning message.",
   "main": "test.js",
   "preferGlobal": true,

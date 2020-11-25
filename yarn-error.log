@@ -14,17 +14,17 @@ Platform:
   darwin x64
 
 Trace: 
-  SyntaxError: /Users/molin/workspace/utils/bytecode-verifier/package.json: Unexpected token } in JSON at position 750
-      at JSON.parse (<anonymous>)
-      at /usr/local/lib/node_modules/yarn/lib/cli.js:1625:59
-      at Generator.next (<anonymous>)
-      at step (/usr/local/lib/node_modules/yarn/lib/cli.js:304:30)
-      at /usr/local/lib/node_modules/yarn/lib/cli.js:315:13
+  Error: https://registry.npmjs.org/-/user/org.couchdb.user:molin0000: ETIMEDOUT
+      at Timeout._onTimeout (/usr/local/lib/node_modules/yarn/lib/cli.js:141124:19)
+      at ontimeout (timers.js:436:11)
+      at tryOnTimeout (timers.js:300:5)
+      at listOnTimeout (timers.js:263:5)
+      at Timer.processTimers (timers.js:223:10)
 
 npm manifest: 
   {
     "name": "@wandevs/bytecode-verifier",
-    "version": "0.4.0",
+    "version": "0.4.3",
     "description": "The purpose of this tool is to verify that the Contract Source on wanchain matches the bytecode that's actually on the blockchain. If the code does not match the blockchain, the tool will display a warning message.",
     "main": "test.js",
     "preferGlobal": true,
@@ -47,7 +47,7 @@ npm manifest:
     "devDependencies": {
       "gulp": "^4.0.2"
     },
-    "repository": "https://github.com/molin0000/bytecode-verifier",
+    "repository": "https://github.com/molin0000/bytecode-verifier"
   }
 
 yarn manifest: 
