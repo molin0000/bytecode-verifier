@@ -71,6 +71,7 @@ program
         prompt(verifier_question)
           .then((answers) => {
             answers['file_folder'] = process.cwd();
+            console.log('answers', answers, 'provider', provider);
             verifier(answers, provider);
           })
           .catch(err => {
