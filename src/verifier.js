@@ -30,6 +30,7 @@ const verifier = (answers, provider) => {
 	solc.loadRemoteVersion(solc_version, function (err, solc_specific) {
 		if (err) {
 			console.log('Solc failed to loaded' + err);
+			return;
 		}
 
 		var input_json = {
@@ -52,7 +53,7 @@ const verifier = (answers, provider) => {
 		}
 		// if solc successfully loaded, compile the contract and get the JSON output
 		var output = JSON.parse(solc_specific.compile(JSON.stringify(input_json)));
-		
+
 		// get bytecode from JSON output
 		let solc_minor = parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[0].slice(1))
 		let solc_patch = parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[1].slice(1))
@@ -100,6 +101,9 @@ const verifier = (answers, provider) => {
 			// a165627a7a72305820 is a fixed prefix of swarm info that was appended to contract bytecode
 			// the beginning of swarm_info is always the ending point of the actual contract bytecode
 			var ending_point = bytecode.search('a165627a7a72305820');
+			if (ending_point === -1) {
+				ending_point = bytecode.search('a264697066735822');
+			}
 
 
 			// construct the actual deployed bytecode
@@ -120,6 +124,37 @@ const verifier = (answers, provider) => {
 		}
 	});
 
+
+	function compareBytecodes(
+		deployedBytecode,
+		compiledBytecode
+	) {
+
+		if (deployedBytecode && deployedBytecode.length > 2) {
+			if (deployedBytecode === compiledBytecode) {
+				return 'perfect';
+			}
+
+			if (getBytecodeWithoutMetadata(deployedBytecode) === getBytecodeWithoutMetadata(compiledBytecode)) {
+				return 'partial';
+			}
+		}
+		return null;
+	}
+
+	/**
+		* Removes post-fixed metadata from a bytecode string
+	* (for partial bytecode match comparisons )
+	* @param  {string} bytecode
+	* @return {string}          bytecode minus metadata
+	*/
+	function getBytecodeWithoutMetadata(bytecode) {
+		// Last 4 chars of bytecode specify byte size of metadata component,
+		// const metadataSize = parseInt(bytecode.slice(-4), 16) * 2 + 4;
+		const metadataSize = 86;
+		return bytecode.slice(0, bytecode.length - metadataSize);
+	}
+
 	function testify_with_blockchain(solc_version) {
 		// using web3 getCode function to read from blockchain
 		web3.eth.getCode(contract_address)
@@ -128,8 +163,42 @@ const verifier = (answers, provider) => {
 				console.log('==========================================')
 				console.log('Finishing retrieving bytecode from blockchain...');
 				bytecode_from_blockchain = output;
+				const compRet = compareBytecodes(bytecode_from_blockchain, bytecode_from_compiler);
+				if (compRet !== null) {
+					console.log()
+					console.log('==========================================')
+					console.log(chalk.bold.underline.green("Bytecode Verified!! " + compRet));
+					return;
+				}
 
-				if (parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[0].slice(1)) >= 4
+				console.log('first compare', compRet);
+
+				if (parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[0].slice(1)) >= 5) { // if the solc version is large than 0.5.x, tail 86 char should remove.
+					const metadataHead = 'a264697066735822'; // 0xa2, 0x64, 'i', 'p', 'f', 's', 0x58, 0x22
+
+					var ending_point = output.search(metadataHead);
+
+					var swarm_hash_full = output.slice(output.lastIndexOf(metadataHead), -4);
+					var swarm_hash = swarm_hash_full.slice(18);
+
+					bytecode_from_blockchain = output.slice(0, ending_point);
+
+					console.log("Corresponding ipfs hash is: ipfs://" + swarm_hash);
+
+					console.log('bytecode_from_blockchain', bytecode_from_blockchain.length);
+					console.log('bytecode_from_compiler', bytecode_from_compiler.length);
+
+
+					if (bytecode_from_blockchain == bytecode_from_compiler) {
+						console.log()
+						console.log('==========================================')
+						console.log(chalk.bold.underline.green("Bytecode Verified!!"))
+					} else {
+						console.log()
+						console.log('==========================================')
+						console.log(chalk.bold.underline.red("Bytecode doesn't match!!"))
+					}
+				} else if (parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[0].slice(1)) >= 4
 					&& parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[1].slice(1)) >= 7) {
 					// code stored at the contract address has no constructor or contract creation bytecode,
 					// only with swarm metadata appending at the back, therefore to get the actual deployed bytecode,
@@ -143,17 +212,7 @@ const verifier = (answers, provider) => {
 
 					console.log("Corresponding swarm hash is: bzzr://" + swarm_hash);
 
-					if (bytecode_from_blockchain.slice(0, bytecode_from_blockchain.length - 86) == bytecode_from_compiler.slice(0, bytecode_from_compiler.length - 86)) {
-						console.log()
-						console.log('==========================================')
-						console.log(chalk.bold.underline.green("Bytecode Verified!!"))
-					} else {
-						console.log()
-						console.log('==========================================')
-						console.log(chalk.bold.underline.red("Bytecode doesn't match!!"))
-					}
-				} else if (parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[0].slice(1)) >= 5) { // if the solc version is large than 0.5.x, tail 86 char should remove.
-					if (bytecode_from_blockchain.slice(0, bytecode_from_blockchain.length - 86) == bytecode_from_compiler.slice(0, bytecode_from_compiler.length - 86)) {
+					if (bytecode_from_blockchain == bytecode_from_compiler) {
 						console.log()
 						console.log('==========================================')
 						console.log(chalk.bold.underline.green("Bytecode Verified!!"))

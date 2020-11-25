@@ -10,5 +10,14 @@ const answers = {
 
 const provider = 'https://gwan-ssl.wandevs.org:56891';
 
-verifier(answers, provider);
+// verifier(answers, provider);
 
+const answers2 = {
+  solc_version: 'v0.4.26+commit.4563c3fc',
+  file_name: 'QuotaDelegate.sol',
+  contract_address: '0x3feD7D5371841307369F7adbCb2aBF5617cd8611',
+  is_optimized: '1',
+  file_folder: '/Users/molin/workspace/utils/bytecode-verifier'
+};
+
+verifier(answers2, provider);
