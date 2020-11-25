@@ -8,9 +8,11 @@ const answers = {
   file_folder: '/Users/molin/workspace/utils/bytecode-verifier'
 };
 
-const provider = 'https://gwan-ssl.wandevs.org:56891';
+// const provider = 'https://gwan-ssl.wandevs.org:56891';
+const provider = 'http://192.168.1.2:9545';
 
-// verifier(answers, provider);
+
+verifier(answers, provider);
 
 const answers2 = {
   solc_version: 'v0.4.26+commit.4563c3fc',
@@ -21,3 +23,13 @@ const answers2 = {
 };
 
 verifier(answers2, provider);
+
+const answers3 = {
+  solc_version: 'v0.6.6+commit.6c089d02',
+  file_name: 'UniswapV2Factory.sol',
+  contract_address: '0x1125C5F53C72eFd175753d427aA116B972Aa5537',
+  is_optimized: '1',
+  file_folder: '/Users/molin/workspace/utils/bytecode-verifier'
+};
+
+verifier(answers3, provider);

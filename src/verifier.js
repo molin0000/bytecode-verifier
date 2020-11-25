@@ -75,10 +75,10 @@ const verifier = (answers, provider) => {
 			// every bytecode from compiler would have constructor bytecode inserted before actual deployed code.
 			// the starting point is a fixed opcode: "CALLDATASIZE ISZERO"
 			// which is 3615 in bytecode
-
+			var starting_point = 0;
 			if (solc_minor >= 4 && solc_patch >= 22) {
 				// if solc version is at least 0.4.22, initial bytecode has 6080... instead of 6060...
-				var starting_point = bytecode.lastIndexOf('6080604052');
+				starting_point = bytecode.lastIndexOf('6080604052');
 				// a165627a7a72305820 is a fixed prefix of swarm info that was appended to contract bytecode
 				// the beginning of swarm_info is always the ending point of the actual contract bytecode
 
@@ -91,7 +91,7 @@ const verifier = (answers, provider) => {
 				// every bytecode from compiler may or may not have constructor bytecode inserted before
 				// actual deployed code (since constructor is optional).So there might be multiple matching
 				// prefix of "6060604052", and actual deployed code starts at the last such pattern.
-				var starting_point = bytecode.lastIndexOf('6060604052');
+				starting_point = bytecode.lastIndexOf('6060604052');
 				// a165627a7a72305820 is a fixed prefix of swarm info that was appended to contract bytecode
 				// the beginning of swarm_info is always the ending point of the actual contract bytecode
 			}
@@ -155,6 +155,26 @@ const verifier = (answers, provider) => {
 		return bytecode.slice(0, bytecode.length - metadataSize);
 	}
 
+	function debugDiff(b1, b2) {
+		let min = b1.length < b2.length ? b1.length : b2.length;
+		let output = "";
+		for (let i=0; i<min; i++) {
+			if (b1[i] !== b2[i]) {
+				output+="x";
+			} else {
+				output+=".";
+			}
+		}
+		console.log(output);
+		if (b1.length !== b2.length) {
+			if (b1.length > b2.length) {
+				console.log('b1 more:', b1.length - b2.length, b1.slice(-1*(b1.length - b2.length)));
+			} else {
+				console.log('b2 more:', b2.length - b1.length, b1.slice(-1*(b2.length - b1.length)));
+			}
+		}
+	}
+
 	function testify_with_blockchain(solc_version) {
 		// using web3 getCode function to read from blockchain
 		web3.eth.getCode(contract_address)
@@ -188,6 +208,11 @@ const verifier = (answers, provider) => {
 					console.log('bytecode_from_blockchain', bytecode_from_blockchain.length);
 					console.log('bytecode_from_compiler', bytecode_from_compiler.length);
 
+					if (bytecode_from_compiler.length > bytecode_from_blockchain.length) {
+						let sub = bytecode_from_compiler.length - bytecode_from_blockchain.length;
+						console.log('cut bytecode_from_compiler tile:', sub);
+						bytecode_from_compiler = bytecode_from_compiler.slice(0, bytecode_from_blockchain.length);
+					}
 
 					if (bytecode_from_blockchain == bytecode_from_compiler) {
 						console.log()
@@ -197,6 +222,7 @@ const verifier = (answers, provider) => {
 						console.log()
 						console.log('==========================================')
 						console.log(chalk.bold.underline.red("Bytecode doesn't match!!"))
+						debugDiff(bytecode_from_blockchain, bytecode_from_compiler);
 					}
 				} else if (parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[0].slice(1)) >= 4
 					&& parseInt(solc_version.match(/v\d+?\.\d+?\.\d+?[+-]/gi)[0].match(/\.\d+/g)[1].slice(1)) >= 7) {
